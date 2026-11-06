@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${tamanho.id == null} ? 'Novo tamanho' : 'Editar tamanho')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('cadastros')}"></header>
+<main class="conteudo estreito">
+    <h1 th:text="${tamanho.id == null} ? 'Novo tamanho de maleta' : 'Editar tamanho de maleta'">Tamanho</h1>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <form class="formulario" method="post" th:action="@{/tamanhos/salvar}" th:object="${tamanho}">
+        <input type="hidden" th:field="*{id}">
+
+        <div class="grupo">
+            <label>Nome
+                <input type="text" th:field="*{nome}" maxlength="40" required>
+                <span class="erro-campo" th:errors="*{nome}"></span>
+            </label>
+            <label>Ordem
+                <input type="number" th:field="*{ordem}" min="1" required>
+                <span class="erro-campo" th:errors="*{ordem}"></span>
+            </label>
+        </div>
+
+        <div class="grupo">
+            <label>Colunas
+                <input type="number" th:field="*{colunas}" min="4" max="20" required data-tam="w">
+                <span class="erro-campo" th:errors="*{colunas}"></span>
+            </label>
+            <label>Linhas
+                <input type="number" th:field="*{linhas}" min="4" max="15" required data-tam="h">
+                <span class="erro-campo" th:errors="*{linhas}"></span>
+            </label>
+            <label>Preço (₧)
+                <input type="number" th:field="*{preco}" min="0" required>
+                <span class="erro-campo" th:errors="*{preco}"></span>
+            </label>
+        </div>
+
+        <div class="previa-tamanho">
+            <span>Prévia da grade:</span>
+            <div class="previa-grade vazia" data-previa></div>
+        </div>
+
+        <div class="acoes">
+            <button class="btn primario" type="submit">Salvar</button>
+            <a class="btn" th:href="@{/tamanhos}">Cancelar</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

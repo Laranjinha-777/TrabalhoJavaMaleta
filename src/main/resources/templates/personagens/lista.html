@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Personagens')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('cadastros')}"></header>
+<main class="conteudo">
+    <div class="cabecalho">
+        <h1>Personagens</h1>
+        <a class="btn primario" th:href="@{/personagens/novo}">+ Novo personagem</a>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <div class="tabela-wrap">
+        <table class="tabela">
+            <thead>
+            <tr><th>Nome</th><th>Ocupação</th><th>Vida</th><th class="num">Pesetas</th><th class="num">Maletas</th><th class="acoes-col">Ações</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${personagens}">
+                <td th:text="${p.nome}">Nome</td>
+                <td th:text="${p.ocupacao}">Ocupação</td>
+                <td>
+                    <div class="vida-barra" th:classappend="${p.estado}">
+                        <span th:style="|width:${p.percentualVida}%|"></span>
+                    </div>
+                    <small class="sub" th:text="${p.vida} + ' / ' + ${p.vidaMaxima}">0</small>
+                </td>
+                <td class="num" th:text="'₧ ' + ${#numbers.formatInteger(p.pesetas, 1, 'POINT')}">0</td>
+                <td class="num" th:text="${qtdMaletas[p.id]}">0</td>
+                <td class="acoes-col">
+                    <a class="btn pequeno" th:href="@{/personagens/{id}/editar(id=${p.id})}">Editar</a>
+                    <form method="post" th:action="@{/personagens/{id}/excluir(id=${p.id})}" class="inline"
+                          th:data-confirmar="'Excluir ' + ${p.nome} + '?'">
+                        <button class="btn pequeno perigo" type="submit">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(personagens)}"><td colspan="6" class="vazio">Nenhum personagem cadastrado.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

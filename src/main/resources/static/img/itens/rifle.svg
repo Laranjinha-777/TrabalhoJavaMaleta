@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 80" width="360" height="80"><defs><linearGradient id="metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b636b"/><stop offset="1" stop-color="#1c2024"/></linearGradient><linearGradient id="metalEsc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4046"/><stop offset="1" stop-color="#121518"/></linearGradient><linearGradient id="prata" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3e7ea"/><stop offset="1" stop-color="#7d868e"/></linearGradient><linearGradient id="madeira" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a5a33"/><stop offset="1" stop-color="#4a2c16"/></linearGradient><linearGradient id="borracha" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b2b2b"/><stop offset="1" stop-color="#0f0f0f"/></linearGradient><linearGradient id="brilho" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ffffff00"/></linearGradient></defs>
+      <path d="M6 36 L104 32 L112 52 L98 54 L60 56 L26 70 Q10 72 8 62 Z" fill="url(#madeira)" stroke="#0a0b0c" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M14 42 L100 38" stroke="#ffffff22" stroke-width="2"/>
+      <rect x="104" y="32" width="80" height="16" rx="3" fill="url(#metalEsc)" stroke="#0a0b0c" stroke-width="1.6" stroke-linejoin="round"/>
+      
+      <path d="M126 48 Q126 62 140 62 H148" fill="none" stroke="#15181b" stroke-width="4"/>
+      <rect x="182" y="35" width="172" height="7" rx="2" fill="url(#metal)" stroke="#0a0b0c" stroke-width="1.6" stroke-linejoin="round"/>
+      <rect x="182" y="40" width="80" height="10" rx="3" fill="url(#madeira)" stroke="#0a0b0c" stroke-width="1.6" stroke-linejoin="round"/>
+      <rect x="120" y="12" width="96" height="14" rx="6" fill="url(#metalEsc)" stroke="#0a0b0c" stroke-width="1.6" stroke-linejoin="round"/>
+      <rect x="112" y="10" width="14" height="18" rx="4" fill="url(#metal)" stroke="#0a0b0c" stroke-width="1.6" stroke-linejoin="round"/>
+      <rect x="210" y="9" width="16" height="20" rx="4" fill="url(#metal)" stroke="#0a0b0c" stroke-width="1.6" stroke-linejoin="round"/>
+      <rect x="140" y="26" width="6" height="7" fill="#15181b"/><rect x="190" y="26" width="6" height="7" fill="#15181b"/>
+      <circle cx="224" cy="19" r="5" fill="#2c5f86" opacity=".8"/>
+      <rect x="122" y="14" width="92" height="3" fill="#ffffff33"/>
+      <path d="M140 30 h-10 v-8 h-6" stroke="#9aa3ab" stroke-width="4" fill="none"/><circle cx="122" cy="22" r="5" fill="#9aa3ab" stroke="#0a0b0c" stroke-width="1.6" stroke-linejoin="round"/>
+    </svg>

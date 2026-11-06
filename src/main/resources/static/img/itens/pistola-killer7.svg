@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 80" width="160" height="80"><defs><linearGradient id="metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b636b"/><stop offset="1" stop-color="#1c2024"/></linearGradient><linearGradient id="metalEsc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4046"/><stop offset="1" stop-color="#121518"/></linearGradient><linearGradient id="prata" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3e7ea"/><stop offset="1" stop-color="#7d868e"/></linearGradient><linearGradient id="madeira" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a5a33"/><stop offset="1" stop-color="#4a2c16"/></linearGradient><linearGradient id="borracha" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b2b2b"/><stop offset="1" stop-color="#0f0f0f"/></linearGradient><linearGradient id="brilho" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ffffff00"/></linearGradient></defs>
+    <g transform="translate(4,6)">
+      <path d="M22 36 H52 L45 70 Q44 74 39 74 H22 Q17 74 18 69 Z" fill="url(#borracha)" stroke="#0a0b0c" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M24 44 h22 M23 50 h21 M22 56 h21 M21 62 h20" stroke="#ffffff22" stroke-width="1.4"/>
+      <path d="M26 30 H112 V38 H80 Q74 38 72 42 L70 45 H52 L50 38 H26 Z" fill="url(#prata)" stroke="#0a0b0c" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M52 38 Q51 54 63 54 H71 Q74 46 71 41" fill="none" stroke="#15181b" stroke-width="4"/>
+      <path d="M61 41 q3 6 -1 10" stroke="#2a2e33" stroke-width="3" fill="none"/>
+      <rect x="10" y="12" width="114" height="19" rx="3" fill="url(#prata)" stroke="#0a0b0c" stroke-width="1.6" stroke-linejoin="round"/>
+      <rect x="12" y="13" width="110" height="4" rx="2" fill="url(#brilho)" opacity=".35"/>
+      <path d="M18 17 v11 M22 17 v11 M26 17 v11 M30 17 v11" stroke="#00000066" stroke-width="1.5"/>
+      <rect x="120" y="16" width="6" height="8" fill="#0b0b0b"/>
+      <rect x="12" y="8" width="6" height="5" fill="#15181b"/>
+      <rect x="114" y="8" width="4" height="5" fill="#15181b"/>
+      <rect x="4" y="14" width="7" height="9" rx="2" fill="#15181b"/>
+    </g></svg>

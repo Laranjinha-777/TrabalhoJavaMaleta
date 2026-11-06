@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Categorias')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('cadastros')}"></header>
+<main class="conteudo">
+    <div class="cabecalho">
+        <h1>Categorias</h1>
+        <a class="btn primario" th:href="@{/categorias/novo}">+ Nova categoria</a>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <div class="tabela-wrap">
+        <table class="tabela">
+            <thead>
+            <tr><th>Cor</th><th>Nome</th><th>Tipo</th><th>Descrição</th><th class="num">Itens</th><th class="acoes-col">Ações</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="c : ${categorias}">
+                <td><span class="bolinha" th:style="|background:${c.cor}|"></span></td>
+                <td th:text="${c.nome}">Arma</td>
+                <td>
+                    <span th:text="${c.tipo.rotulo}">Arma</span>
+                    <small class="sub" th:unless="${c.tipo.ocupaMaleta}">fora da grade</small>
+                </td>
+                <td th:text="${c.descricao}">desc</td>
+                <td class="num" th:text="${qtdItens[c.id]}">0</td>
+                <td class="acoes-col">
+                    <a class="btn pequeno" th:href="@{/categorias/{id}/editar(id=${c.id})}">Editar</a>
+                    <form method="post" th:action="@{/categorias/{id}/excluir(id=${c.id})}" class="inline"
+                          th:data-confirmar="'Excluir a categoria ' + ${c.nome} + '?'">
+                        <button class="btn pequeno perigo" type="submit">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(categorias)}"><td colspan="6" class="vazio">Nenhuma categoria cadastrada.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

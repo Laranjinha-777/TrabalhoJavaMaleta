@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Início')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('inicio')}"></header>
+<main class="conteudo">
+    <section class="hero">
+        <div>
+            <h1>Organize sua maleta</h1>
+            <p>Gerencie maletas, itens e o que cada personagem carrega. Cada item ocupa espaço na grade —
+                organize bem para caber tudo.</p>
+            <div class="acoes">
+                <a class="btn primario" th:href="@{/maletas}">Abrir maletas</a>
+                <a class="btn" th:href="@{/itens/novo}">Cadastrar item</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="cards">
+        <a class="card" th:href="@{/maletas}"><strong th:text="${totalMaletas}">0</strong><span>Maletas</span></a>
+        <a class="card" th:href="@{/itens}"><strong th:text="${totalItens}">0</strong><span>Itens cadastrados</span></a>
+        <a class="card" th:href="@{/categorias}"><strong th:text="${totalCategorias}">0</strong><span>Categorias</span></a>
+        <a class="card" th:href="@{/personagens}"><strong th:text="${totalPersonagens}">0</strong><span>Personagens</span></a>
+        <a class="card" th:href="@{/guardados}"><strong th:text="${totalGuardados}">0</strong><span>Itens guardados</span></a>
+    </section>
+
+    <h2>Maletas</h2>
+    <div class="lista-maletas">
+        <a class="maleta-mini" th:each="m : ${maletas}" th:href="@{/maletas/{id}(id=${m.id})}">
+            <span class="maleta-mini-grade" th:style="|--cols:${m.colunas};--rows:${m.linhas}|"></span>
+            <span>
+                <strong th:text="${m.nome}">Maleta</strong>
+                <small th:text="${m.personagem.nome} + ' · ' + ${m.colunas} + 'x' + ${m.linhas}">dono</small>
+            </span>
+        </a>
+        <p class="vazio" th:if="${#lists.isEmpty(maletas)}">Nenhuma maleta cadastrada.</p>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${titulo} + ' · Maleta'">Maleta</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/estilo.css}">
+    <link rel="stylesheet" th:href="@{/css/inventario.css}">
+    <link rel="stylesheet" th:href="@{/css/imagens.css}">
+    <script th:src="@{/js/app.js}" defer></script>
+</head>
+<body>
+
+<header th:fragment="menu(ativo)" class="topo">
+    <a class="marca" th:href="@{/}">
+        <span class="marca-icone" aria-hidden="true"></span>
+        <span>MALETA<small>Sistema de Inventário</small></span>
+    </a>
+    <nav class="menu">
+        <a th:href="@{/}" th:classappend="${ativo == 'inicio'} ? 'ativo'">Início</a>
+        <a th:href="@{/maletas}" th:classappend="${ativo == 'maletas'} ? 'ativo'">Maletas</a>
+        <a th:href="@{/mercador}" th:classappend="${ativo == 'mercador'} ? 'ativo'">Mercador</a>
+        <details class="submenu" th:classappend="${ativo == 'cadastros'} ? 'ativo'">
+            <summary>Cadastros</summary>
+            <div>
+                <a th:href="@{/itens}">Itens</a>
+                <a th:href="@{/melhorias}">Melhorias de armas</a>
+                <a th:href="@{/combinacoes}">Combinações</a>
+                <a th:href="@{/categorias}">Categorias</a>
+                <a th:href="@{/tamanhos}">Tamanhos de maleta</a>
+                <a th:href="@{/personagens}">Personagens</a>
+                <a th:href="@{/guardados}">Itens nas maletas</a>
+                <a th:href="@{/transacoes}">Histórico do mercador</a>
+            </div>
+        </details>
+    </nav>
+</header>
+
+<span th:fragment="miniatura(item)" class="miniatura" th:classappend="${item.imagem != null} ? 'com-imagem'"
+      th:style="|--w:${item.largura};--h:${item.altura};--cor:${item.categoria.cor}|"><img
+        th:if="${item.imagem != null}" th:src="@{${item.imagem}}" alt=""></span>
+
+<div th:fragment="alertas">
+    <div class="alerta sucesso" th:if="${sucesso}" th:text="${sucesso}">ok</div>
+    <div class="alerta erro" th:if="${erro}" th:text="${erro}">erro</div>
+</div>
+
+</body>
+</html>

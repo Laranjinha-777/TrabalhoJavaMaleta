@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${item.id == null} ? 'Novo item' : 'Editar item')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('cadastros')}"></header>
+<main class="conteudo estreito">
+    <h1 th:text="${item.id == null} ? 'Novo item' : 'Editar item'">Item</h1>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <form class="formulario" method="post" th:action="@{/itens/salvar}" th:object="${item}" enctype="multipart/form-data">
+        <input type="hidden" th:field="*{id}">
+
+        <label>Nome
+            <input type="text" th:field="*{nome}" maxlength="80" required>
+            <span class="erro-campo" th:errors="*{nome}"></span>
+        </label>
+
+        <label>Categoria
+            <select th:field="*{categoria}" required data-categoria>
+                <option value="">Selecione…</option>
+                <option th:each="c : ${categorias}" th:value="${c.id}" th:text="${c.nome} + ' (' + ${c.tipo.rotulo} + ')'"
+                        th:data-cor="${c.cor}" th:data-tipo="${c.tipo}">Categoria</option>
+            </select>
+            <span class="erro-campo" th:errors="*{categoria}"></span>
+        </label>
+
+        <label>Descrição
+            <textarea th:field="*{descricao}" rows="2" maxlength="500"></textarea>
+            <span class="erro-campo" th:errors="*{descricao}"></span>
+        </label>
+
+        <fieldset class="bloco">
+            <legend>Imagem na maleta</legend>
+            <div class="imagem-editor">
+                <div class="imagem-previa" data-imagem-previa
+                     th:style="|--w:${item.largura};--h:${item.altura}|">
+                    <img th:if="${item.imagem != null}" th:src="@{${item.imagem}}" alt="">
+                </div>
+                <div class="imagem-campos">
+                    <label>Ícone do sistema ou caminho
+                        <input type="text" th:field="*{imagem}" list="lista-icones" placeholder="/img/itens/pistola.svg"
+                               data-imagem-caminho>
+                        <datalist id="lista-icones">
+                            <option th:each="i : ${icones}" th:value="${i}"></option>
+                        </datalist>
+                        <span class="erro-campo" th:errors="*{imagem}"></span>
+                    </label>
+                    <label>Ou envie uma imagem (PNG, JPG, WEBP ou GIF, até 2 MB)
+                        <input type="file" name="arquivo" accept="image/png,image/jpeg,image/webp,image/gif" data-imagem-arquivo>
+                    </label>
+                    <small class="sub">Desenhe/recorte a imagem na proporção do item (largura × altura) com fundo transparente.
+                        Deixe vazio para mostrar só a cor da categoria.</small>
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="grupo">
+            <label>Largura (células)
+                <input type="number" th:field="*{largura}" min="1" max="13" required data-tam="w">
+                <span class="erro-campo" th:errors="*{largura}"></span>
+            </label>
+            <label>Altura (células)
+                <input type="number" th:field="*{altura}" min="1" max="9" required data-tam="h">
+                <span class="erro-campo" th:errors="*{altura}"></span>
+            </label>
+            <label>Empilhamento máximo
+                <input type="number" th:field="*{empilhamentoMaximo}" min="1" required>
+                <span class="erro-campo" th:errors="*{empilhamentoMaximo}"></span>
+            </label>
+        </div>
+
+        <div class="previa-tamanho">
+            <span>Espaço ocupado na maleta:</span>
+            <div class="previa-grade" data-previa></div>
+        </div>
+
+        <fieldset class="bloco">
+            <legend>Mercador</legend>
+            <label class="check">
+                <input type="checkbox" th:field="*{vendidoMercador}"> O mercador vende este item
+            </label>
+            <div class="grupo">
+                <label>Preço de compra (₧)
+                    <input type="number" th:field="*{preco}" min="0" step="1" required>
+                    <span class="erro-campo" th:errors="*{preco}"></span>
+                </label>
+                <label>Valor de venda por unidade (₧)
+                    <input type="number" th:field="*{valorVenda}" min="0" step="1" required>
+                    <small class="sub">Armas vendem pela metade do valor investido.</small>
+                    <span class="erro-campo" th:errors="*{valorVenda}"></span>
+                </label>
+            </div>
+        </fieldset>
+
+        <fieldset class="bloco" data-so-tipo="ARMA">
+            <legend>Arma</legend>
+            <label>Munição usada
+                <select th:field="*{municao}">
+                    <option value="">Nenhuma (uso único)</option>
+                    <option th:each="m : ${municoes}" th:value="${m.id}" th:text="${m.nome}">Munição</option>
+                </select>
+                <span class="erro-campo" th:errors="*{municao}"></span>
+            </label>
+            <p class="sub" th:if="${item.id != null}">
+                Níveis e preços de melhoria: <a class="link" th:href="@{/melhorias(armaId=${item.id})}">tabela de melhorias</a>
+            </p>
+        </fieldset>
+
+        <fieldset class="bloco" data-so-tipo="CURA">
+            <legend>Recuperação</legend>
+            <div class="grupo">
+                <label>Cura (vida)
+                    <input type="number" th:field="*{cura}" min="-1">
+                    <small class="sub">-1 = recupera toda a vida · vazio = não pode ser usado sozinho</small>
+                    <span class="erro-campo" th:errors="*{cura}"></span>
+                </label>
+                <label>Aumento da vida máxima
+                    <input type="number" th:field="*{aumentoVidaMaxima}" min="0">
+                    <span class="erro-campo" th:errors="*{aumentoVidaMaxima}"></span>
+                </label>
+            </div>
+        </fieldset>
+
+        <div class="acoes">
+            <button class="btn primario" type="submit">Salvar</button>
+            <a class="btn" th:href="@{/itens}">Cancelar</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

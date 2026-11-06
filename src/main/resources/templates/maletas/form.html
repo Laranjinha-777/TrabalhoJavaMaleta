@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${maleta.id == null} ? 'Nova maleta' : 'Editar maleta')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('maletas')}"></header>
+<main class="conteudo estreito">
+    <h1 th:text="${maleta.id == null} ? 'Nova maleta' : 'Editar maleta'">Maleta</h1>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <form class="formulario" method="post" th:action="@{/maletas/salvar}" th:object="${maleta}">
+        <input type="hidden" th:field="*{id}">
+
+        <label>Nome
+            <input type="text" th:field="*{nome}" maxlength="60" required>
+            <span class="erro-campo" th:errors="*{nome}"></span>
+        </label>
+
+        <label>Dono (personagem)
+            <select th:field="*{personagem}" required>
+                <option value="">Selecione…</option>
+                <option th:each="p : ${personagens}" th:value="${p.id}" th:text="${p.nome}">Personagem</option>
+            </select>
+            <span class="erro-campo" th:errors="*{personagem}"></span>
+        </label>
+
+        <label>Tamanho
+            <select th:field="*{tamanho}" required data-tamanho-maleta>
+                <option value="">Selecione…</option>
+                <option th:each="t : ${tamanhos}" th:value="${t.id}" th:data-w="${t.colunas}" th:data-h="${t.linhas}"
+                        th:text="${t.nome} + ' — ' + ${t.colunas} + '×' + ${t.linhas}">Tamanho</option>
+            </select>
+            <small class="sub">Para aumentar a maleta durante o jogo, compre um tamanho maior no mercador.</small>
+            <span class="erro-campo" th:errors="*{tamanho}"></span>
+        </label>
+
+        <div class="previa-tamanho">
+            <span>Prévia da grade:</span>
+            <div class="previa-grade vazia" data-previa></div>
+        </div>
+
+        <div class="acoes">
+            <button class="btn primario" type="submit">Salvar</button>
+            <a class="btn" th:href="@{/maletas}">Cancelar</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

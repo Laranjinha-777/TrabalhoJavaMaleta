@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${maleta.nome})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('maletas')}"></header>
+<main class="conteudo largo">
+    <div class="cabecalho">
+        <div>
+            <h1 th:text="${maleta.nome}">Maleta</h1>
+            <p class="sub" th:text="${maleta.tamanho.nome} + ' · ' + ${maleta.colunas} + '×' + ${maleta.linhas}
+                + ' · ' + ${ocupadas} + ' de ' + ${maleta.capacidade} + ' células ocupadas'">info</p>
+        </div>
+        <div class="acoes">
+            <a class="btn primario" th:href="@{/mercador/{id}(id=${maleta.id})}">Mercador</a>
+            <a class="btn" th:href="@{/maletas/{id}/editar(id=${maleta.id})}">Editar</a>
+            <a class="btn" th:href="@{/maletas}">Voltar</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <div class="inventario">
+        <section class="maleta-caixa">
+            <div class="maleta-grade" id="grade"
+                 th:style="|--cols:${maleta.colunas};--rows:${maleta.linhas}|"
+                 th:data-cols="${maleta.colunas}" th:data-rows="${maleta.linhas}">
+                <th:block th:each="y : ${#numbers.sequence(0, maleta.linhas - 1)}">
+                    <span th:each="x : ${#numbers.sequence(0, maleta.colunas - 1)}" class="celula"
+                          th:style="|grid-column:${x + 1};grid-row:${y + 1}|"></span>
+                </th:block>
+
+                <button type="button" th:each="g : ${grade}" class="peca"
+                        th:classappend="${(g.rotacionado ? 'rot ' : '') + (g.equipada ? 'equipada ' : '') + (g.item.imagem != null ? 'com-imagem' : '')}"
+                        th:style="|grid-column:${g.posicaoX + 1} / span ${g.larguraOcupada};grid-row:${g.posicaoY + 1} / span ${g.alturaOcupada};--cor:${g.item.categoria.cor};--pw:${g.larguraOcupada};--ph:${g.alturaOcupada}|"
+                        th:data-id="${g.id}" th:data-x="${g.posicaoX}" th:data-y="${g.posicaoY}"
+                        th:data-w="${g.larguraOcupada}" th:data-h="${g.alturaOcupada}"
+                        th:data-rot="${g.rotacionado}" th:data-nome="${g.item.nome}"
+                        th:title="${g.item.nome}">
+                    <img th:if="${g.item.imagem != null}" th:src="@{${g.item.imagem}}" alt="" draggable="false">
+                    <span class="peca-nome" th:text="${g.item.nome}">Item</span>
+                    <span class="peca-qtd" th:if="${g.item.empilhamentoMaximo > 1}" th:text="${g.quantidade}">1</span>
+                    <span class="peca-qtd" th:if="${g.item.arma and g.item.municao != null}"
+                          th:text="${g.municaoCarregada}">0</span>
+                    <span class="peca-e" th:if="${g.equipada}">E</span>
+                </button>
+            </div>
+            <p class="dica">
+                <kbd>clique</kbd> seleciona · <kbd>arrastar</kbd> move · <kbd>R</kbd> ou botão direito gira durante o arraste ·
+                <kbd>Esc</kbd> cancela
+            </p>
+        </section>
+
+        <aside class="painel">
+            <div class="status">
+                <div class="status-linha">
+                    <strong th:text="${personagem.nome}">Leon</strong>
+                    <span class="pesetas" th:text="'₧ ' + ${#numbers.formatInteger(personagem.pesetas, 1, 'POINT')}">₧ 0</span>
+                </div>
+                <div class="vida-barra grande" th:classappend="${personagem.estado}">
+                    <span th:style="|width:${personagem.percentualVida}%|"></span>
+                </div>
+                <div class="status-linha sub">
+                    <span th:text="${personagem.estado == 'fine'} ? 'Bem' : (${personagem.estado == 'caution'} ? 'Cuidado' : 'Perigo')">Bem</span>
+                    <span th:text="${personagem.vida} + ' / ' + ${personagem.vidaMaxima}">1000/1000</span>
+                </div>
+            </div>
+
+            <div class="detalhe" id="detalhe-vazio">
+                <p class="sub">Selecione um item na maleta.</p>
+            </div>
+
+            <div class="detalhe" th:each="g : ${grade}" th:id="'info-' + ${g.id}" hidden>
+                <div class="detalhe-imagem" th:if="${g.item.imagem != null}">
+                    <img th:src="@{${g.item.imagem}}" alt="">
+                </div>
+                <h3 th:text="${g.item.nome}">Item</h3>
+                <p class="sub" th:text="${g.item.categoria.nome} + ' · ' + ${g.larguraOcupada} + '×' + ${g.alturaOcupada}
+                    + (${g.equipada} ? ' · equipada' : '')">cat</p>
+                <p class="descricao" th:text="${g.item.descricao}">desc</p>
+
+                <dl th:unless="${g.item.arma}">
+                    <th:block th:if="${g.item.empilhamentoMaximo > 1}">
+                        <dt>Quantidade</dt><dd th:text="${g.quantidade} + ' / ' + ${g.item.empilhamentoMaximo}">1</dd>
+                    </th:block>
+                    <th:block th:if="${g.item.cura != null}">
+                        <dt>Recupera</dt><dd th:text="${g.item.cura == -1} ? 'toda a vida' : ${g.item.cura}">0</dd>
+                    </th:block>
+                    <th:block th:if="${g.item.aumentoVidaMaxima != null and g.item.aumentoVidaMaxima > 0}">
+                        <dt>Vida máxima</dt><dd th:text="'+' + ${g.item.aumentoVidaMaxima}">0</dd>
+                    </th:block>
+                    <dt>Mercador paga</dt><dd th:text="'₧ ' + ${#numbers.formatInteger(valorVenda[g.id], 1, 'POINT')}">0</dd>
+                </dl>
+
+                <th:block th:if="${g.item.arma}">
+                    <dl>
+                        <th:block th:if="${g.item.municao != null}">
+                            <dt>Carregada</dt><dd th:text="${g.municaoCarregada} + ' / ' + ${capacidade[g.id]}">0</dd>
+                            <dt>Na maleta</dt><dd th:text="${municaoDisponivel[g.id]} + ' (' + ${g.item.municao.nome} + ')'">0</dd>
+                        </th:block>
+                        <dt>Mercador paga</dt><dd th:text="'₧ ' + ${#numbers.formatInteger(valorVenda[g.id], 1, 'POINT')}">0</dd>
+                    </dl>
+                    <table class="stats">
+                        <tr th:each="s : ${stats[g.id]}" th:unless="${s.atributo.name() == 'EXCLUSIVA'}">
+                            <th th:text="${s.rotulo}">Poder</th>
+                            <td class="pips">
+                                <i th:each="n : ${#numbers.sequence(1, s.nivelMaximo)}" th:classappend="${n <= s.nivel} ? 'on'"></i>
+                            </td>
+                            <td class="num" th:text="${s.valorAtual}">1.0</td>
+                        </tr>
+                    </table>
+                    <p class="exclusiva" th:each="s : ${stats[g.id]}" th:if="${s.atributo.name() == 'EXCLUSIVA' and s.nivel == 2}"
+                       th:text="'★ ' + ${s.descricao}">exclusiva</p>
+                </th:block>
+
+                <div class="menu-acoes">
+                    <form method="post" th:action="@{/guardados/{id}/usar(id=${g.id})}" th:if="${g.item.cura != null}">
+                        <button class="btn primario" type="submit">Usar</button>
+                    </form>
+                    <form method="post" th:action="@{/guardados/{id}/equipar(id=${g.id})}"
+                          th:if="${g.item.categoria.tipo.name() == 'ARMA' or g.item.categoria.tipo.name() == 'GRANADA'}">
+                        <button class="btn primario" type="submit" th:text="${g.equipada} ? 'Desequipar' : 'Equipar'">Equipar</button>
+                    </form>
+                    <form method="post" th:action="@{/guardados/{id}/recarregar(id=${g.id})}"
+                          th:if="${g.item.arma and g.item.municao != null}">
+                        <button class="btn" type="submit">Recarregar</button>
+                    </form>
+                    <button class="btn" type="button" data-combinar th:data-id="${g.id}">Combinar</button>
+                    <form method="post" th:action="@{/guardados/{id}/rotacionar(id=${g.id})}">
+                        <button class="btn" type="submit">Girar</button>
+                    </form>
+                    <a class="btn" th:href="@{/guardados/{id}/editar(id=${g.id})}">Editar</a>
+                    <form method="post" th:action="@{/guardados/{id}/excluir(id=${g.id})}"
+                          th:data-confirmar="'Descartar ' + ${g.item.nome} + '? O item será perdido.'">
+                        <button class="btn perigo" type="submit">Descartar</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="modo-combinar" id="modo-combinar" hidden>
+                <strong>Combinar</strong>
+                <p>Clique no item com o qual deseja combinar <span id="combinar-nome"></span>. <kbd>Esc</kbd> cancela.</p>
+            </div>
+
+            <form class="formulario compacto" method="post" th:action="@{/maletas/{id}/guardar(id=${maleta.id})}">
+                <h3>Pegar item</h3>
+                <p class="sub">Simula pegar um item no cenário: completa pilhas e procura espaço livre (girando se precisar).</p>
+                <select name="itemId" required>
+                    <option value="">Selecione…</option>
+                    <option th:each="i : ${itens}" th:value="${i.id}"
+                            th:text="${i.nome} + ' (' + ${i.largura} + '×' + ${i.altura} + ')'">Item</option>
+                </select>
+                <div class="grupo">
+                    <input type="number" name="quantidade" value="1" min="1" required aria-label="Quantidade">
+                    <button class="btn primario" type="submit">Pegar</button>
+                </div>
+            </form>
+        </aside>
+    </div>
+
+    <section class="tesouros">
+        <h2>Tesouros e itens-chave</h2>
+        <p class="sub">Não ocupam espaço na maleta. Venda os tesouros ao mercador.</p>
+        <div class="lista-tesouros">
+            <div class="tesouro" th:each="t : ${foraDaGrade}" th:style="|--cor:${t.item.categoria.cor}|">
+                <img class="tesouro-img" th:if="${t.item.imagem != null}" th:src="@{${t.item.imagem}}" alt="">
+                <span class="tesouro-icone" th:if="${t.item.imagem == null}"></span>
+                <div>
+                    <strong th:text="${t.item.nome} + (${t.quantidade > 1} ? ' ×' + ${t.quantidade} : '')">Tesouro</strong>
+                    <small class="sub" th:text="${t.item.descricao}">desc</small>
+                </div>
+                <form method="post" th:action="@{/guardados/{id}/excluir(id=${t.id})}"
+                      th:data-confirmar="'Descartar ' + ${t.item.nome} + '?'">
+                    <button class="btn pequeno perigo" type="submit" title="Descartar">×</button>
+                </form>
+            </div>
+            <p class="vazio" th:if="${#lists.isEmpty(foraDaGrade)}">Nenhum tesouro.</p>
+        </div>
+    </section>
+
+    <form method="post" id="form-mover" hidden>
+        <input type="hidden" name="x"><input type="hidden" name="y"><input type="hidden" name="rotacionado">
+    </form>
+    <form method="post" id="form-combinar" hidden>
+        <input type="hidden" name="alvoId">
+    </form>
+</main>
+<script th:inline="javascript">
+    window.BASE_GUARDADOS = [[@{/guardados}]];
+</script>
+</body>
+</html>

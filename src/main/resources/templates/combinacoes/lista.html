@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Combinações')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('cadastros')}"></header>
+<main class="conteudo">
+    <div class="cabecalho">
+        <div>
+            <h1>Combinações</h1>
+            <p class="sub">Receitas usadas pela ação "Combinar" da maleta (a ordem dos itens não importa).
+                Munição + arma (recarregar) e pilhas iguais combinam automaticamente.</p>
+        </div>
+        <a class="btn primario" th:href="@{/combinacoes/novo}">+ Nova combinação</a>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <div class="tabela-wrap">
+        <table class="tabela">
+            <thead><tr><th>Item A</th><th></th><th>Item B</th><th></th><th>Resultado</th><th class="acoes-col">Ações</th></tr></thead>
+            <tbody>
+            <tr th:each="c : ${combinacoes}">
+                <td><span class="etiqueta" th:style="|--cor:${c.itemA.categoria.cor}|" th:text="${c.itemA.nome}">A</span></td>
+                <td>+</td>
+                <td><span class="etiqueta" th:style="|--cor:${c.itemB.categoria.cor}|" th:text="${c.itemB.nome}">B</span></td>
+                <td>=</td>
+                <td><strong th:text="${c.resultado.nome}">R</strong></td>
+                <td class="acoes-col">
+                    <a class="btn pequeno" th:href="@{/combinacoes/{id}/editar(id=${c.id})}">Editar</a>
+                    <form method="post" th:action="@{/combinacoes/{id}/excluir(id=${c.id})}" class="inline"
+                          data-confirmar="Excluir esta combinação?">
+                        <button class="btn pequeno perigo" type="submit">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(combinacoes)}"><td colspan="6" class="vazio">Nenhuma combinação cadastrada.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

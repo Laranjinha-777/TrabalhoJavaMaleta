@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${personagem.id == null} ? 'Novo personagem' : 'Editar personagem')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('cadastros')}"></header>
+<main class="conteudo estreito">
+    <h1 th:text="${personagem.id == null} ? 'Novo personagem' : 'Editar personagem'">Personagem</h1>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <form class="formulario" method="post" th:action="@{/personagens/salvar}" th:object="${personagem}">
+        <input type="hidden" th:field="*{id}">
+
+        <label>Nome
+            <input type="text" th:field="*{nome}" maxlength="80" required>
+            <span class="erro-campo" th:errors="*{nome}"></span>
+        </label>
+
+        <label>Ocupação
+            <input type="text" th:field="*{ocupacao}" maxlength="80">
+            <span class="erro-campo" th:errors="*{ocupacao}"></span>
+        </label>
+
+        <div class="grupo">
+            <label>Pesetas (₧)
+                <input type="number" th:field="*{pesetas}" min="0" step="1" required>
+                <span class="erro-campo" th:errors="*{pesetas}"></span>
+            </label>
+            <label>Vida
+                <input type="number" th:field="*{vida}" min="0" required>
+                <span class="erro-campo" th:errors="*{vida}"></span>
+            </label>
+            <label>Vida máxima
+                <input type="number" th:field="*{vidaMaxima}" min="1" required>
+                <span class="erro-campo" th:errors="*{vidaMaxima}"></span>
+            </label>
+        </div>
+
+        <div class="acoes">
+            <button class="btn primario" type="submit">Salvar</button>
+            <a class="btn" th:href="@{/personagens}">Cancelar</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

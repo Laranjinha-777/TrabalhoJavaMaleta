@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${itemMaleta.id == null} ? 'Posicionar item' : 'Editar posição')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('cadastros')}"></header>
+<main class="conteudo estreito">
+    <h1 th:text="${itemMaleta.id == null} ? 'Posicionar item' : 'Editar posição'">Item na maleta</h1>
+    <p class="sub">A posição (0, 0) é o canto superior esquerdo. Tesouros e itens-chave ficam fora da grade (a posição é ignorada). O sistema não deixa o item sair da grade nem
+        ficar por cima de outro.</p>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <form class="formulario" method="post" th:action="@{/guardados/salvar}" th:object="${itemMaleta}">
+        <input type="hidden" th:field="*{id}">
+
+        <label>Maleta
+            <select th:field="*{maleta}" required>
+                <option value="">Selecione…</option>
+                <option th:each="m : ${maletas}" th:value="${m.id}"
+                        th:text="${m.nome} + ' — ' + ${m.personagem.nome} + ' (' + ${m.colunas} + '×' + ${m.linhas} + ')'">Maleta</option>
+            </select>
+            <span class="erro-campo" th:errors="*{maleta}"></span>
+        </label>
+
+        <label>Item
+            <select th:field="*{item}" required>
+                <option value="">Selecione…</option>
+                <option th:each="i : ${itens}" th:value="${i.id}"
+                        th:text="${i.nome} + ' (' + ${i.largura} + '×' + ${i.altura} + ', empilha ' + ${i.empilhamentoMaximo} + ')'">Item</option>
+            </select>
+            <span class="erro-campo" th:errors="*{item}"></span>
+        </label>
+
+        <div class="grupo">
+            <label>Coluna (X)
+                <input type="number" th:field="*{posicaoX}" min="0">
+                <span class="erro-campo" th:errors="*{posicaoX}"></span>
+            </label>
+            <label>Linha (Y)
+                <input type="number" th:field="*{posicaoY}" min="0">
+                <span class="erro-campo" th:errors="*{posicaoY}"></span>
+            </label>
+            <label>Quantidade
+                <input type="number" th:field="*{quantidade}" min="1" required>
+                <span class="erro-campo" th:errors="*{quantidade}"></span>
+            </label>
+        </div>
+
+        <label class="check">
+            <input type="checkbox" th:field="*{rotacionado}"> Rotacionado (gira 90°, troca largura e altura)
+        </label>
+
+        <div class="acoes">
+            <button class="btn primario" type="submit">Salvar</button>
+            <a class="btn" th:href="${itemMaleta.maleta != null and itemMaleta.maleta.id != null} ? @{/maletas/{id}(id=${itemMaleta.maleta.id})} : @{/guardados}">Cancelar</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

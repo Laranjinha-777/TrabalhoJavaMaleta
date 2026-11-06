@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Melhorias de armas')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('cadastros')}"></header>
+<main class="conteudo">
+    <div class="cabecalho">
+        <div>
+            <h1>Melhorias de armas</h1>
+            <p class="sub">Tabela do "Tune Up": o nível 1 é o valor base; cada nível seguinte tem um custo no mercador.</p>
+        </div>
+        <a class="btn primario" th:href="@{/melhorias/novo(armaId=${armaId})}">+ Novo nível</a>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <form class="filtros" method="get" th:action="@{/melhorias}">
+        <select name="armaId" onchange="this.form.submit()">
+            <option value="">Todas as armas</option>
+            <option th:each="a : ${armas}" th:value="${a.id}" th:text="${a.nome}" th:selected="${a.id == armaId}">Arma</option>
+        </select>
+        <noscript><button class="btn" type="submit">Filtrar</button></noscript>
+    </form>
+
+    <div class="tabela-wrap">
+        <table class="tabela">
+            <thead>
+            <tr><th>Arma</th><th>Atributo</th><th class="num">Nível</th><th class="num">Valor</th>
+                <th class="num">Custo</th><th>Observação</th><th class="acoes-col">Ações</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="m : ${melhorias}">
+                <td th:text="${m.arma.nome}">Arma</td>
+                <td th:text="${m.atributo.rotulo}">Poder</td>
+                <td class="num" th:text="${m.nivel}">1</td>
+                <td class="num" th:text="${m.valorFormatado}">1.0</td>
+                <td class="num" th:text="${m.custo == 0} ? 'base' : '₧ ' + ${#numbers.formatInteger(m.custo, 1, 'POINT')}">0</td>
+                <td><small th:text="${m.descricao}"></small></td>
+                <td class="acoes-col">
+                    <a class="btn pequeno" th:href="@{/melhorias/{id}/editar(id=${m.id})}">Editar</a>
+                    <form method="post" th:action="@{/melhorias/{id}/excluir(id=${m.id})}" class="inline"
+                          th:data-confirmar="'Excluir este nível de ' + ${m.arma.nome} + '?'">
+                        <button class="btn pequeno perigo" type="submit">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(melhorias)}"><td colspan="7" class="vazio">Nenhum nível cadastrado.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

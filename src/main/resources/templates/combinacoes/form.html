@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${combinacao.id == null} ? 'Nova combinação' : 'Editar combinação')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('cadastros')}"></header>
+<main class="conteudo estreito">
+    <h1 th:text="${combinacao.id == null} ? 'Nova combinação' : 'Editar combinação'">Combinação</h1>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <form class="formulario" method="post" th:action="@{/combinacoes/salvar}" th:object="${combinacao}">
+        <input type="hidden" th:field="*{id}">
+
+        <label>Item A
+            <select th:field="*{itemA}" required>
+                <option value="">Selecione…</option>
+                <option th:each="i : ${itens}" th:value="${i.id}" th:text="${i.nome}">Item</option>
+            </select>
+            <span class="erro-campo" th:errors="*{itemA}"></span>
+        </label>
+        <label>Item B
+            <select th:field="*{itemB}" required>
+                <option value="">Selecione…</option>
+                <option th:each="i : ${itens}" th:value="${i.id}" th:text="${i.nome}">Item</option>
+            </select>
+            <span class="erro-campo" th:errors="*{itemB}"></span>
+        </label>
+        <label>Resultado
+            <select th:field="*{resultado}" required>
+                <option value="">Selecione…</option>
+                <option th:each="i : ${itens}" th:value="${i.id}" th:text="${i.nome}">Item</option>
+            </select>
+            <span class="erro-campo" th:errors="*{resultado}"></span>
+        </label>
+
+        <div class="acoes">
+            <button class="btn primario" type="submit">Salvar</button>
+            <a class="btn" th:href="@{/combinacoes}">Cancelar</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

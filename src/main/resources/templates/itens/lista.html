@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Itens')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('cadastros')}"></header>
+<main class="conteudo">
+    <div class="cabecalho">
+        <h1>Itens</h1>
+        <a class="btn primario" th:href="@{/itens/novo}">+ Novo item</a>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <form class="filtros" method="get" th:action="@{/itens}">
+        <input type="search" name="nome" th:value="${nome}" placeholder="Buscar por nome…">
+        <select name="categoriaId">
+            <option value="">Todas as categorias</option>
+            <option th:each="c : ${categorias}" th:value="${c.id}" th:text="${c.nome}"
+                    th:selected="${c.id == categoriaId}">Categoria</option>
+        </select>
+        <button class="btn" type="submit">Filtrar</button>
+        <a class="btn fantasma" th:href="@{/itens}">Limpar</a>
+    </form>
+
+    <div class="tabela-wrap">
+        <table class="tabela">
+            <thead>
+            <tr><th>Formato</th><th>Nome</th><th>Categoria</th><th class="num">Tamanho</th>
+                <th class="num">Empilha</th><th class="num">Compra</th><th class="num">Venda</th><th class="acoes-col">Ações</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="i : ${itens}">
+                <td>
+                    <span th:replace="~{fragments/layout :: miniatura(${i})}"></span>
+                </td>
+                <td>
+                    <strong th:text="${i.nome}">Nome</strong>
+                    <small class="sub" th:text="${i.descricao}">desc</small>
+                    <small class="sub" th:if="${i.municao != null}" th:text="'Usa: ' + ${i.municao.nome}">munição</small>
+                </td>
+                <td><span class="etiqueta" th:style="|--cor:${i.categoria.cor}|" th:text="${i.categoria.nome}">Cat</span></td>
+                <td class="num" th:text="${i.largura} + '×' + ${i.altura}">1×1</td>
+                <td class="num" th:text="${i.empilhamentoMaximo}">1</td>
+                <td class="num">
+                    <span th:if="${i.vendidoMercador}" th:text="'₧ ' + ${#numbers.formatInteger(i.preco, 1, 'POINT')}">0</span>
+                    <span class="sub" th:unless="${i.vendidoMercador}">—</span>
+                </td>
+                <td class="num" th:text="${i.arma} ? '½ investido' : '₧ ' + ${#numbers.formatInteger(i.valorVenda, 1, 'POINT')}">0</td>
+                <td class="acoes-col">
+                    <a class="btn pequeno" th:if="${i.arma}" th:href="@{/melhorias(armaId=${i.id})}">Melhorias</a>
+                    <a class="btn pequeno" th:href="@{/itens/{id}/editar(id=${i.id})}">Editar</a>
+                    <form method="post" th:action="@{/itens/{id}/excluir(id=${i.id})}" class="inline"
+                          th:data-confirmar="'Excluir o item ' + ${i.nome} + '?'">
+                        <button class="btn pequeno perigo" type="submit">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(itens)}"><td colspan="8" class="vazio">Nenhum item encontrado.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

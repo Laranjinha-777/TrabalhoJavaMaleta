@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${melhoria.id == null} ? 'Novo nível' : 'Editar nível')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('cadastros')}"></header>
+<main class="conteudo estreito">
+    <h1 th:text="${melhoria.id == null} ? 'Novo nível de melhoria' : 'Editar nível de melhoria'">Melhoria</h1>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <form class="formulario" method="post" th:action="@{/melhorias/salvar}" th:object="${melhoria}">
+        <input type="hidden" th:field="*{id}">
+
+        <label>Arma
+            <select th:field="*{arma}" required>
+                <option value="">Selecione…</option>
+                <option th:each="a : ${armas}" th:value="${a.id}" th:text="${a.nome}">Arma</option>
+            </select>
+            <span class="erro-campo" th:errors="*{arma}"></span>
+        </label>
+
+        <div class="grupo">
+            <label>Atributo
+                <select th:field="*{atributo}" required>
+                    <option th:each="a : ${atributos}" th:value="${a}" th:text="${a.rotulo}">Atributo</option>
+                </select>
+                <span class="erro-campo" th:errors="*{atributo}"></span>
+            </label>
+            <label>Nível
+                <input type="number" th:field="*{nivel}" min="1" max="10" required>
+                <small class="sub">1 = valor base. Exclusiva usa nível 2.</small>
+                <span class="erro-campo" th:errors="*{nivel}"></span>
+            </label>
+        </div>
+
+        <div class="grupo">
+            <label>Valor
+                <input type="number" th:field="*{valor}" step="0.01">
+                <span class="erro-campo" th:errors="*{valor}"></span>
+            </label>
+            <label>Custo (₧)
+                <input type="number" th:field="*{custo}" min="0" required>
+                <span class="erro-campo" th:errors="*{custo}"></span>
+            </label>
+        </div>
+
+        <fieldset class="bloco">
+            <legend>Somente para a melhoria exclusiva</legend>
+            <label>Descrição
+                <input type="text" th:field="*{descricao}" maxlength="200">
+                <span class="erro-campo" th:errors="*{descricao}"></span>
+            </label>
+            <label>Atributo substituído pelo valor
+                <select th:field="*{atributoAfetado}">
+                    <option value="">Nenhum (só descrição)</option>
+                    <option th:each="a : ${atributos}" th:value="${a}" th:text="${a.rotulo}">Atributo</option>
+                </select>
+            </label>
+        </fieldset>
+
+        <div class="acoes">
+            <button class="btn primario" type="submit">Salvar</button>
+            <a class="btn" th:href="@{/melhorias}">Cancelar</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

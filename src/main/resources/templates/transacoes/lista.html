@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Histórico do mercador')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('cadastros')}"></header>
+<main class="conteudo">
+    <div class="cabecalho">
+        <div>
+            <h1>Histórico do mercador</h1>
+            <p class="sub">Registros gerados automaticamente a cada compra, venda, melhoria ou troca de maleta.</p>
+        </div>
+        <a class="btn primario" th:href="@{/mercador}">Ir ao mercador</a>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <div class="tabela-wrap">
+        <table class="tabela">
+            <thead><tr><th>Data</th><th>Personagem</th><th>Tipo</th><th>Descrição</th><th class="num">Valor</th><th class="acoes-col">Ações</th></tr></thead>
+            <tbody>
+            <tr th:each="t : ${transacoes}">
+                <td th:text="${#temporals.format(t.dataHora, 'dd/MM HH:mm:ss')}">data</td>
+                <td th:text="${t.personagem.nome}">Leon</td>
+                <td th:text="${t.tipo.rotulo}">Compra</td>
+                <td th:text="${t.descricao}">desc</td>
+                <td class="num" th:classappend="${t.valor >= 0} ? 'positivo' : 'negativo'"
+                    th:text="(${t.valor >= 0} ? '+ ₧ ' : '− ₧ ') + ${#numbers.formatInteger(t.valor >= 0 ? t.valor : -t.valor, 1, 'POINT')}">0</td>
+                <td class="acoes-col">
+                    <form method="post" th:action="@{/transacoes/{id}/excluir(id=${t.id})}" class="inline"
+                          data-confirmar="Excluir este registro do histórico? (as pesetas não são devolvidas)">
+                        <button class="btn pequeno perigo" type="submit">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(transacoes)}"><td colspan="6" class="vazio">Nenhum negócio feito ainda.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

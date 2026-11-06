@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${categoria.id == null} ? 'Nova categoria' : 'Editar categoria')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('cadastros')}"></header>
+<main class="conteudo estreito">
+    <h1 th:text="${categoria.id == null} ? 'Nova categoria' : 'Editar categoria'">Categoria</h1>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <form class="formulario" method="post" th:action="@{/categorias/salvar}" th:object="${categoria}">
+        <input type="hidden" th:field="*{id}">
+
+        <label>Nome
+            <input type="text" th:field="*{nome}" maxlength="50" required>
+            <span class="erro-campo" th:errors="*{nome}"></span>
+        </label>
+
+        <label>Tipo (define o comportamento no inventário)
+            <select th:field="*{tipo}" required>
+                <option th:each="t : ${tipos}" th:value="${t}"
+                        th:text="${t.rotulo} + (${t.ocupaMaleta} ? '' : ' — não ocupa a grade')">Tipo</option>
+            </select>
+            <span class="erro-campo" th:errors="*{tipo}"></span>
+        </label>
+
+        <label>Descrição
+            <textarea th:field="*{descricao}" rows="3" maxlength="255"></textarea>
+            <span class="erro-campo" th:errors="*{descricao}"></span>
+        </label>
+
+        <label>Cor na maleta
+            <span class="linha-cor">
+                <input type="color" th:field="*{cor}">
+                <span class="amostra-item" data-amostra-cor>Exemplo</span>
+            </span>
+            <span class="erro-campo" th:errors="*{cor}"></span>
+        </label>
+
+        <div class="acoes">
+            <button class="btn primario" type="submit">Salvar</button>
+            <a class="btn" th:href="@{/categorias}">Cancelar</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

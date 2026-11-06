@@ -1,0 +1,95 @@
+.peca.com-imagem {
+    background:
+        radial-gradient(ellipse at 50% 45%, rgba(255,255,255,.07), rgba(0,0,0,.28) 80%),
+        color-mix(in srgb, var(--cor) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--cor) 55%, rgba(255,255,255,.15));
+    box-shadow: inset 0 0 12px rgba(0,0,0,.45);
+    overflow: visible;
+}
+.peca.com-imagem .peca-nome { display: none; }
+.peca.com-imagem:hover, .peca.com-imagem.selecionada {
+    background:
+        radial-gradient(ellipse at 50% 45%, rgba(201,166,70,.22), rgba(0,0,0,.2) 80%),
+        color-mix(in srgb, var(--cor) 20%, transparent);
+    box-shadow: 0 0 0 2px var(--ouro), inset 0 0 12px rgba(0,0,0,.35);
+}
+.peca.com-imagem.equipada { box-shadow: 0 0 0 2px #e8e2d4, inset 0 0 12px rgba(0,0,0,.45); }
+
+.peca img {
+    position: absolute; left: 50%; top: 50%;
+    width: calc(var(--cel) * var(--pw) - 10px);
+    height: calc(var(--cel) * var(--ph) - 10px);
+    transform: translate(-50%, -50%);
+    object-fit: contain;
+    pointer-events: none; user-select: none;
+    filter: drop-shadow(0 3px 2px rgba(0,0,0,.75));
+}
+.peca.rot img {
+    width: calc(var(--cel) * var(--ph) - 10px);
+    height: calc(var(--cel) * var(--pw) - 10px);
+    transform: translate(-50%, -50%) rotate(-90deg);
+}
+.peca.com-imagem .peca-qtd, .peca.com-imagem .peca-e { z-index: 2; text-shadow: 0 1px 2px #000, 0 0 4px #000; }
+.peca.com-imagem .peca-qtd { top: auto; bottom: 1px; }
+.maleta-grade.mini .peca img {
+    width: calc(var(--cel) * var(--pw) - 4px);
+    height: calc(var(--cel) * var(--ph) - 4px);
+    filter: none;
+}
+.maleta-grade.mini .peca.rot img {
+    width: calc(var(--cel) * var(--ph) - 4px);
+    height: calc(var(--cel) * var(--pw) - 4px);
+}
+
+.miniatura {
+    --m: 12px;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: calc(var(--w) * var(--m)); height: calc(var(--h) * var(--m));
+    min-width: 12px;
+    background: var(--cor); border: 1px solid rgba(255,255,255,.35); border-radius: 2px;
+    background-image:
+        linear-gradient(rgba(0,0,0,.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,.25) 1px, transparent 1px);
+    background-size: var(--m) var(--m);
+    vertical-align: middle;
+}
+.miniatura.com-imagem {
+    --m: 16px;
+    background: radial-gradient(ellipse, rgba(255,255,255,.06), transparent 70%), #10140f;
+    border-color: color-mix(in srgb, var(--cor) 50%, #333);
+    padding: 2px;
+}
+.miniatura img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 2px 1px rgba(0,0,0,.7)); }
+.lista-armas .miniatura.com-imagem { --m: 12px; }
+
+.detalhe-imagem {
+    display: flex; align-items: center; justify-content: center;
+    height: 96px; margin: -.25rem 0 .75rem; padding: .5rem;
+    border-radius: var(--raio);
+    background:
+        radial-gradient(ellipse at 50% 50%, rgba(255,255,255,.08), transparent 70%),
+        repeating-linear-gradient(0deg, transparent 0 23px, rgba(0,0,0,.35) 23px 24px),
+        repeating-linear-gradient(90deg, transparent 0 23px, rgba(0,0,0,.35) 23px 24px),
+        var(--verde);
+    border: 1px solid #11160f;
+}
+.detalhe-imagem img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 4px 3px rgba(0,0,0,.8)); }
+.detalhe-imagem.grande { height: 130px; }
+
+.tesouro-img { width: 34px; height: 34px; object-fit: contain; flex: none; filter: drop-shadow(0 2px 2px rgba(0,0,0,.7)); }
+
+.imagem-editor { display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap; }
+.imagem-previa {
+    --cel: 34px;
+    flex: none; position: relative;
+    width: calc(var(--w) * var(--cel)); height: calc(var(--h) * var(--cel));
+    max-width: 100%;
+    background:
+        repeating-linear-gradient(0deg, transparent 0 calc(var(--cel) - 1px), rgba(0,0,0,.45) calc(var(--cel) - 1px) var(--cel)),
+        repeating-linear-gradient(90deg, transparent 0 calc(var(--cel) - 1px), rgba(0,0,0,.45) calc(var(--cel) - 1px) var(--cel)),
+        var(--verde);
+    border: 2px solid #11160f; border-radius: 3px;
+}
+.imagem-previa img { position: absolute; inset: 4px; width: calc(100% - 8px); height: calc(100% - 8px); object-fit: contain; filter: drop-shadow(0 3px 2px rgba(0,0,0,.75)); }
+.imagem-campos { flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: .75rem; }
+input[type=file] { padding: .4rem; }

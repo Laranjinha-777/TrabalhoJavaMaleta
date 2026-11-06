@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Mercador')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('mercador')}"></header>
+<main class="conteudo largo">
+    <div class="cabecalho">
+        <div>
+            <h1>Mercador</h1>
+            <p class="sub">Compre armas, venda tesouros e melhore seu arsenal.</p>
+        </div>
+        <form class="acoes" method="get" th:action="@{/mercador}" data-trocar-maleta>
+            <label class="sub" for="sel-maleta">Cliente:</label>
+            <select id="sel-maleta" data-trocar-maleta-select>
+                <option th:each="m : ${maletas}" th:value="@{/mercador/{id}(id=${m.id}, aba=${aba})}"
+                        th:selected="${m.id == maleta.id}" th:text="${m.personagem.nome} + ' — ' + ${m.nome}">Leon</option>
+            </select>
+            <a class="btn" th:href="@{/maletas/{id}(id=${maleta.id})}">Abrir maleta</a>
+        </form>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <div class="loja">
+        <section>
+            <div class="carteira">
+                <span th:text="${personagem.nome}">Leon</span>
+                <strong th:text="'₧ ' + ${#numbers.formatInteger(personagem.pesetas, 1, 'POINT')}">₧ 0</strong>
+            </div>
+
+            <nav class="abas">
+                <a th:href="@{/mercador/{id}(id=${maleta.id}, aba='comprar')}" th:classappend="${aba == 'comprar'} ? 'ativa'">Comprar</a>
+                <a th:href="@{/mercador/{id}(id=${maleta.id}, aba='vender')}" th:classappend="${aba == 'vender'} ? 'ativa'">Vender</a>
+                <a th:href="@{/mercador/{id}(id=${maleta.id}, aba='melhorar')}" th:classappend="${aba == 'melhorar'} ? 'ativa'">Melhorar</a>
+            </nav>
+
+            <div th:if="${aba == 'comprar'}">
+                <div class="tabela-wrap">
+                    <table class="tabela">
+                        <thead><tr><th>Formato</th><th>Item</th><th class="num">Tamanho</th><th class="num">Preço</th><th class="acoes-col"></th></tr></thead>
+                        <tbody>
+                        <tr th:each="i : ${aVenda}">
+                            <td><span th:replace="~{fragments/layout :: miniatura(${i})}"></span></td>
+                            <td>
+                                <strong th:text="${i.nome}">Item</strong>
+                                <small class="sub" th:text="${i.categoria.nome} + ' · ' + ${i.descricao}">desc</small>
+                            </td>
+                            <td class="num" th:text="${i.largura} + '×' + ${i.altura}">1×1</td>
+                            <td class="num preco" th:text="'₧ ' + ${#numbers.formatInteger(i.preco, 1, 'POINT')}">0</td>
+                            <td class="acoes-col">
+                                <form method="post" th:action="@{/mercador/{id}/comprar(id=${maleta.id})}" class="inline">
+                                    <input type="hidden" name="itemId" th:value="${i.id}">
+                                    <button class="btn pequeno primario" type="submit"
+                                            th:disabled="${personagem.pesetas < i.preco}">Comprar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2>Maletas</h2>
+                <div class="cards-maleta">
+                    <div class="card-maleta" th:each="t : ${maletasMaiores}">
+                        <span class="maleta-mini-grade" th:style="|--cols:${t.colunas};--rows:${t.linhas}|"></span>
+                        <div>
+                            <strong th:text="${t.nome}">M</strong>
+                            <small class="sub" th:text="${t.colunas} + '×' + ${t.linhas} + ' (' + ${t.capacidade} + ' células)'">10x8</small>
+                        </div>
+                        <form method="post" th:action="@{/mercador/{id}/maleta(id=${maleta.id})}">
+                            <input type="hidden" name="tamanhoId" th:value="${t.id}">
+                            <button class="btn pequeno primario" type="submit" th:disabled="${personagem.pesetas < t.preco}"
+                                    th:text="'₧ ' + ${#numbers.formatInteger(t.preco, 1, 'POINT')}">₧</button>
+                        </form>
+                    </div>
+                    <p class="vazio" th:if="${#lists.isEmpty(maletasMaiores)}">Você já tem a maior maleta.</p>
+                </div>
+            </div>
+
+            <div th:if="${aba == 'vender'}">
+                <div class="tabela-wrap">
+                    <table class="tabela">
+                        <thead><tr><th>Item</th><th>Categoria</th><th class="num">Qtd.</th><th class="num">Valor</th><th class="acoes-col"></th></tr></thead>
+                        <tbody>
+                        <tr th:each="im : ${itensVenda}">
+                            <td>
+                                <strong th:text="${im.item.nome}">Item</strong>
+                                <small class="sub" th:if="${im.item.arma}" th:text="'Investido: ₧ ' + ${#numbers.formatInteger(im.investido, 1, 'POINT')}
+                                    + (${im.equipada} ? ' · equipada' : '')">inv</small>
+                            </td>
+                            <td><span class="etiqueta" th:style="|--cor:${im.item.categoria.cor}|" th:text="${im.item.categoria.nome}">Cat</span></td>
+                            <td class="num" th:text="${im.quantidade}">1</td>
+                            <td class="num preco" th:text="'₧ ' + ${#numbers.formatInteger(valorVenda[im.id], 1, 'POINT')}">0</td>
+                            <td class="acoes-col">
+                                <form method="post" th:action="@{/mercador/{id}/vender(id=${maleta.id})}" class="inline"
+                                      th:data-confirmar="'Vender ' + ${im.item.nome} + ' por ₧ ' + ${valorVenda[im.id]} + '?'">
+                                    <input type="hidden" name="itemMaletaId" th:value="${im.id}">
+                                    <button class="btn pequeno primario" type="submit">Vender</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(itensVenda)}"><td colspan="5" class="vazio">Nada para vender.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div th:if="${aba == 'melhorar'}">
+                <p class="vazio" th:if="${#lists.isEmpty(armas)}">Nenhuma arma na maleta.</p>
+                <div class="tuneup" th:unless="${#lists.isEmpty(armas)}">
+                    <ul class="lista-armas">
+                        <li th:each="a : ${armas}">
+                            <a th:href="@{/mercador/{id}(id=${maleta.id}, aba='melhorar', arma=${a.id})}"
+                               th:classappend="${armaSelecionada != null and a.id == armaSelecionada.id} ? 'ativa'">
+                                <span th:replace="~{fragments/layout :: miniatura(${a.item})}"></span>
+                                <span th:text="${a.item.nome}">Arma</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="painel-tuneup" th:if="${armaSelecionada != null}">
+                        <div class="detalhe-imagem grande" th:if="${armaSelecionada.item.imagem != null}">
+                            <img th:src="@{${armaSelecionada.item.imagem}}" alt="">
+                        </div>
+                        <h3 th:text="${armaSelecionada.item.nome}">Arma</h3>
+                        <p class="sub" th:text="${armaSelecionada.item.descricao}">desc</p>
+                        <table class="stats grande">
+                            <thead><tr><th>Atributo</th><th>Nível</th><th class="num">Atual</th><th class="num">Próximo</th><th class="acoes-col">Custo</th></tr></thead>
+                            <tbody>
+                            <tr th:each="s : ${stats}">
+                                <th th:text="${s.rotulo}">Poder</th>
+                                <td class="pips">
+                                    <i th:each="n : ${#numbers.sequence(1, s.nivelMaximo)}" th:classappend="${n <= s.nivel} ? 'on'"></i>
+                                    <small class="sub" th:if="${s.descricao != null}" th:text="${s.descricao}">exclusiva</small>
+                                </td>
+                                <td class="num" th:text="${s.valorAtual}">1.0</td>
+                                <td class="num" th:text="${s.proximoValor != null} ? ${s.proximoValor} : (${s.noMaximo} ? 'MÁX' : '—')">-</td>
+                                <td class="acoes-col">
+                                    <form method="post" th:action="@{/mercador/{id}/melhorar(id=${maleta.id})}" class="inline"
+                                          th:if="${s.proximoCusto != null}">
+                                        <input type="hidden" name="armaId" th:value="${armaSelecionada.id}">
+                                        <input type="hidden" name="atributo" th:value="${s.atributo}">
+                                        <button class="btn pequeno primario" type="submit"
+                                                th:disabled="${!s.disponivel or personagem.pesetas < s.proximoCusto}"
+                                                th:title="${s.disponivel} ? '' : 'Disponível com todos os atributos no máximo'"
+                                                th:text="'₧ ' + ${#numbers.formatInteger(s.proximoCusto, 1, 'POINT')}">₧</button>
+                                    </form>
+                                    <span class="sub" th:if="${s.proximoCusto == null}">—</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <p class="sub" th:text="'Investido nesta arma: ₧ ' + ${#numbers.formatInteger(armaSelecionada.investido, 1, 'POINT')}
+                            + ' · vende por ₧ ' + ${#numbers.formatInteger(valorVenda[armaSelecionada.id], 1, 'POINT')}">inv</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <aside class="painel">
+            <div class="detalhe">
+                <h3>Sua maleta</h3>
+                <p class="sub" th:text="${maleta.tamanho.nome} + ' · ' + ${maleta.colunas} + '×' + ${maleta.linhas}">P</p>
+                <div class="maleta-grade mini" th:style="|--cols:${maleta.colunas};--rows:${maleta.linhas}|">
+                    <th:block th:each="y : ${#numbers.sequence(0, maleta.linhas - 1)}">
+                        <span th:each="x : ${#numbers.sequence(0, maleta.colunas - 1)}" class="celula"
+                              th:style="|grid-column:${x + 1};grid-row:${y + 1}|"></span>
+                    </th:block>
+                    <span th:each="g : ${grade}" class="peca" th:title="${g.item.nome}"
+                          th:classappend="${(g.rotacionado ? 'rot ' : '') + (g.item.imagem != null ? 'com-imagem' : '')}"
+                          th:style="|grid-column:${g.posicaoX + 1} / span ${g.larguraOcupada};grid-row:${g.posicaoY + 1} / span ${g.alturaOcupada};--cor:${g.item.categoria.cor};--pw:${g.larguraOcupada};--ph:${g.alturaOcupada}|"><img
+                          th:if="${g.item.imagem != null}" th:src="@{${g.item.imagem}}" alt=""></span>
+                </div>
+            </div>
+            <div class="detalhe">
+                <h3>Últimos negócios</h3>
+                <ul class="historico">
+                    <li th:each="t : ${transacoes}">
+                        <span th:text="${t.tipo.rotulo} + ': ' + ${t.descricao}">Compra</span>
+                        <strong th:classappend="${t.valor >= 0} ? 'positivo' : 'negativo'"
+                                th:text="(${t.valor >= 0} ? '+' : '−') + ${#numbers.formatInteger(t.valor >= 0 ? t.valor : -t.valor, 1, 'POINT')}">0</strong>
+                    </li>
+                    <li class="sub" th:if="${#lists.isEmpty(transacoes)}">Nenhum negócio ainda.</li>
+                </ul>
+                <a class="link" th:href="@{/transacoes}">Ver histórico completo</a>
+            </div>
+        </aside>
+    </div>
+</main>
+</body>
+</html>

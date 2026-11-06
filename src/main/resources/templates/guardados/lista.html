@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Itens guardados')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('cadastros')}"></header>
+<main class="conteudo">
+    <div class="cabecalho">
+        <h1>Itens guardados</h1>
+        <a class="btn primario" th:href="@{/guardados/novo}">+ Posicionar item</a>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <div class="tabela-wrap">
+        <table class="tabela">
+            <thead>
+            <tr><th>Maleta</th><th>Dono</th><th>Item</th><th class="num">Posição</th>
+                <th class="num">Tamanho</th><th class="num">Qtd.</th><th class="acoes-col">Ações</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="g : ${guardados}">
+                <td><a class="link" th:href="@{/maletas/{id}(id=${g.maleta.id})}" th:text="${g.maleta.nome}">Maleta</a></td>
+                <td th:text="${g.maleta.personagem.nome}">Dono</td>
+                <td><span class="etiqueta" th:style="|--cor:${g.item.categoria.cor}|" th:text="${g.item.nome}">Item</span></td>
+                <td class="num" th:text="${g.posicaoX == null} ? 'fora da grade' : '(' + ${g.posicaoX} + ', ' + ${g.posicaoY} + ')'">(0,0)</td>
+                <td class="num" th:text="${g.larguraOcupada} + '×' + ${g.alturaOcupada} + (${g.rotacionado} ? ' ↻' : '')">1×1</td>
+                <td class="num" th:text="${g.quantidade}">1</td>
+                <td class="acoes-col">
+                    <a class="btn pequeno" th:href="@{/guardados/{id}/editar(id=${g.id})}">Editar</a>
+                    <form method="post" th:action="@{/guardados/{id}/excluir(id=${g.id}, voltarPara='lista')}" class="inline"
+                          th:data-confirmar="'Remover ' + ${g.item.nome} + ' da maleta?'">
+                        <button class="btn pequeno perigo" type="submit">Remover</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(guardados)}"><td colspan="7" class="vazio">Nenhum item guardado.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Maletas')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('maletas')}"></header>
+<main class="conteudo">
+    <div class="cabecalho">
+        <h1>Maletas</h1>
+        <a class="btn primario" th:href="@{/maletas/novo}">+ Nova maleta</a>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <div class="tabela-wrap">
+        <table class="tabela">
+            <thead>
+            <tr><th>Nome</th><th>Dono</th><th class="num">Grade</th><th class="num">Itens</th>
+                <th>Ocupação</th><th class="acoes-col">Ações</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="m : ${maletas}" th:with="pct=${ocupadas[m.id] * 100 / m.capacidade}">
+                <td><a class="link" th:href="@{/maletas/{id}(id=${m.id})}" th:text="${m.nome}">Maleta</a></td>
+                <td th:text="${m.personagem.nome}">Dono</td>
+                <td class="num" th:text="${m.colunas} + '×' + ${m.linhas}">10×6</td>
+                <td class="num" th:text="${qtdItens[m.id]}">0</td>
+                <td>
+                    <div class="barra" th:title="${ocupadas[m.id]} + ' de ' + ${m.capacidade} + ' células'">
+                        <span th:style="|width:${pct}%|"></span>
+                    </div>
+                    <small class="sub" th:text="${pct} + '%'">0%</small>
+                </td>
+                <td class="acoes-col">
+                    <a class="btn pequeno primario" th:href="@{/maletas/{id}(id=${m.id})}">Abrir</a>
+                    <a class="btn pequeno" th:href="@{/maletas/{id}/editar(id=${m.id})}">Editar</a>
+                    <form method="post" th:action="@{/maletas/{id}/excluir(id=${m.id})}" class="inline"
+                          th:data-confirmar="'Excluir a maleta ' + ${m.nome} + ' e todos os itens dentro dela?'">
+                        <button class="btn pequeno perigo" type="submit">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(maletas)}"><td colspan="6" class="vazio">Nenhuma maleta cadastrada.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

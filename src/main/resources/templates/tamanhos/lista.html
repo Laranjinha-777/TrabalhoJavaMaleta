@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Tamanhos de maleta')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu('cadastros')}"></header>
+<main class="conteudo">
+    <div class="cabecalho">
+        <div>
+            <h1>Tamanhos de maleta</h1>
+            <p class="sub">Vendidos pelo mercador. A maleta só pode ser trocada por uma de ordem maior.</p>
+        </div>
+        <a class="btn primario" th:href="@{/tamanhos/novo}">+ Novo tamanho</a>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <div class="tabela-wrap">
+        <table class="tabela">
+            <thead>
+            <tr><th>Grade</th><th>Nome</th><th class="num">Ordem</th><th class="num">Colunas × Linhas</th>
+                <th class="num">Células</th><th class="num">Preço</th><th class="acoes-col">Ações</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="t : ${tamanhos}">
+                <td><span class="maleta-mini-grade" th:style="|--cols:${t.colunas};--rows:${t.linhas}|"></span></td>
+                <td th:text="${t.nome}">P</td>
+                <td class="num" th:text="${t.ordem}">1</td>
+                <td class="num" th:text="${t.colunas} + ' × ' + ${t.linhas}">10×6</td>
+                <td class="num" th:text="${t.capacidade}">60</td>
+                <td class="num" th:text="${t.preco == 0} ? 'inicial' : '₧ ' + ${#numbers.formatInteger(t.preco, 1, 'POINT')}">0</td>
+                <td class="acoes-col">
+                    <a class="btn pequeno" th:href="@{/tamanhos/{id}/editar(id=${t.id})}">Editar</a>
+                    <form method="post" th:action="@{/tamanhos/{id}/excluir(id=${t.id})}" class="inline"
+                          th:data-confirmar="'Excluir o tamanho ' + ${t.nome} + '?'">
+                        <button class="btn pequeno perigo" type="submit">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(tamanhos)}"><td colspan="7" class="vazio">Nenhum tamanho cadastrado.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>
